@@ -1,0 +1,45 @@
+<html>
+	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	<div id="f">
+	</div>
+	<script>
+		var modified = {};
+		$(document).ready (function ()
+		{
+			function getParameter(id) 
+			{
+			  id = id.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+			  var regex = new RegExp("[\\?&]" + id + "=([^&#]*)"),
+			      results = regex.exec(location.search);
+			  return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+			}
+
+			function query ()
+			{
+				$.get (projectid+'/', function (data)
+				{
+					$('#f').empty ();
+					for (var p in data)
+					{
+						$('#f').append ('<a href="'+projectid+"/"+data[p].f+'" target="_blank">'+data[p].f+'</a><br>');
+						if (!modified[data[p].f] || modified[data[p].f] != data[p].m)
+						{
+							if (data[p].f.toLowerCase().indexOf ('.svg') == data[p].f.length-4)
+							{
+								window.open (projectid+"/"+data[p].f, data[p].f, "width=600, height=400");
+								modified[data[p].f] = data[p].m;
+							}
+						}
+					}
+				});
+				setTimeout (query, 1000);
+			}
+
+			var projectid = getParameter("projectid");
+			if (projectid && projectid.length > 0)
+			{
+				query ();
+			}
+		});
+	</script>
+</html>
